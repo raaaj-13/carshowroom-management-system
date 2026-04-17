@@ -50,14 +50,14 @@ The AutoShowroom web application provides a platform to browse and book cars fro
 The application is accessible at: **http://127.0.0.1:5000** or **http://localhost:5000**
 
 ## Screenshots
-- **Homepage**: `screenshots/homepage.png`
-- **Login Page**: `screenshots/login.png`
-- **User Dashboard**: `screenshots/user_dashboard.png`
-- **Admin Dashboard**: `screenshots/admin_dashboard.png`
+- **Homepage**: `screenshot/homepage.png`
+- **Login Page**: `screenshot/login.png`
+- **User Dashboard**: `screenshot/user.png`
+- **Admin Dashboard**: `screenshot/user.png`
 
 ## Database Configuration
 The Flask application connects to the `postgres` database (not `car_showroom`) for user and car data management.
 ![Homepage](screenshot/homepage.png)
 ![Login Page](screenshot/login.png)
-![User Dashboard](screenshot/user_dashboard.png)
-![Admin Dashboard](screenshot/admin_dashboard.png)
+![User Dashboard](screenshot/user.png)
+![Admin Dashboard](screenshot/user.png)
