@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% block title %}My Dashboard – AutoShowroom{% endblock %}
+
+{% block content %}
+
+{% set brand_imgs = {
+    'Toyota':  'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=500&q=80',
+    'Honda':   'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=500&q=80',
+    'Ford':    'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=500&q=80',
+    'BMW':     'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=500&q=80',
+    'Hyundai': 'https://images.unsplash.com/photo-1629906066966-e5dc62a3cfcf?w=500&q=80',
+    'Mercedes':'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&q=80',
+    'Audi':    'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=500&q=80'
+} %}
+
+<style>
+  /* ── USER DASHBOARD EXCLUSIVE STYLES ── */
+  .ud-wrap { display: grid; grid-template-columns: 260px 1fr; gap: 28px; min-height: 90vh; }
+
+  /* SIDEBAR */
+  .ud-sidebar {
+    background: #0d1117;
+    border-radius: 18px;
+    padding: 32px 22px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+  }
+  .ud-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e94560, #f5a623);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700; color: #fff;
+    margin: 0 auto 14px;
+    letter-spacing: 1px;
+  }
+  .ud-name { text-align: center; font-size: 17px; font-weight: 700; color: #fff; }
+  .ud-role { text-align: center; font-size: 12px; color: #aaa; margin-bottom: 28px; }
+  .ud-divider { border: none; border-top: 1px solid #2a2a3a; margin: 8px 0; }
+  .ud-nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; border-radius: 10px;
+    color: #ccc; font-size: 14px; cursor: pointer;
+    transition: all .18s; margin-bottom: 4px;
+    text-decoration: none;
+  }
+  .ud-nav-item:hover, .ud-nav-item.active {
+    background: #1e2230; color: #fff;
+  }
+  .ud-nav-item.active { color: #f5a623; }
+  .ud-nav-icon { font-size: 17px; }
+  .ud-stat-mini {
+    background: #1a1f2e; border-radius: 12px; padding: 14px 16px;
+    margin-top: 20px;
+  }
+  .ud-stat-mini-row { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
+  .ud-stat-mini-row:last-child { margin-bottom: 0; }
+  .ud-stat-mini-label { font-size: 12px; color: #888; }
+  .ud-stat-mini-val { font-size: 16px; font-weight: 700; color: #fff; }
+
+  /* MAIN CONTENT */
+  .ud-main { display: flex; flex-direction: column; gap: 26px; }
+
+  /* TOP BAR */
+  .ud-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-radius: 14px; padding: 18px 26px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border: 1px solid #f0f0f0;
+  }
+  .ud-greeting h2 { font-size: 22px; font-weight: 800; color: #0d1117; }
+  .ud-greeting p  { font-size: 13px; color: #888; margin-top: 2px; }
+  .ud-topbar-right { display: flex; gap: 10px; }
+  .ud-badge-btn {
+    background: #fff7ed; border: 1px solid #fdd6a0; color: #c27a00;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; text-decoration: none;
+  }
+
+  /* HERO BANNER */
+  .ud-hero {
+    border-radius: 18px; overflow: hidden;
+    position: relative; height: 210px;
+  }
+  .ud-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ud-hero-over {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(13,17,23,.88) 45%, transparent);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 36px 40px;
+  }
+  .ud-hero-over h3 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .ud-hero-over p  { font-size: 14px; color: #ccc; }
+
+  /* STAT CARDS ROW */
+  .ud-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .ud-stat {
+    background: #fff; border-radius: 14px; padding: 20px 22px;
+    border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .ud-stat-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ud-stat-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .icon-blue   { background: #eff6ff; }
+  .icon-green  { background: #f0fdf4; }
+  .icon-amber  { background: #fffbeb; }
+  .ud-stat-lbl { font-size: 13px; color: #888; }
+  .ud-stat-num { font-size: 30px; font-weight: 800; color: #0d1117; }
+
+  /* SECTION HEADERS */
+  .ud-sec-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .ud-sec-head h4 { font-size: 17px; font-weight: 700; color: #0d1117; }
+  .ud-see-all {
+    font-size: 13px; color: #e94560; text-decoration: none; font-weight: 600;
+  }
+
+  /* CAR CARDS HORIZONTAL */
+  .ud-cars-scroll {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 18px;
+  }
+  .ud-car {
+    background: #fff; border-radius: 16px; overflow: hidden;
+    border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .ud-car:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+  .ud-car-img { width: 100%; height: 140px; object-fit: cover; display: block; }
+  .ud-car-body { padding: 14px 16px; }
+  .ud-car-title { font-size: 14px; font-weight: 700; color: #0d1117; margin-bottom: 6px; }
+  .ud-car-meta { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+  .ud-car-price { font-size: 16px; font-weight: 800; color: #e94560; margin: 8px 0; }
+  .ud-book-btn {
+    width: 100%; background: #0d1117; color: #fff;
+    border: none; border-radius: 9px; padding: 9px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .18s;
+  }
+  .ud-book-btn:hover { background: #e94560; }
+
+  /* BOOKINGS TABLE */
+  .ud-table-wrap {
+    background: #fff; border-radius: 16px; padding: 22px 24px;
+    border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .ud-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .ud-table th {
+    text-align: left; padding: 10px 14px;
+    font-size: 12px; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: .6px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .ud-table td { padding: 13px 14px; border-bottom: 1px solid #f8f8f8; color: #333; }
+  .ud-table tr:last-child td { border-bottom: none; }
+  .ud-table tr:hover td { background: #fafafa; }
+  .ud-car-thumb { width: 54px; height: 36px; border-radius: 7px; object-fit: cover; }
+
+  /* STATUS PILLS */
+  .pill {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: .3px;
+  }
+  .pill-pending  { background: #fffbeb; color: #b45309; }
+  .pill-approved { background: #f0fdf4; color: #15803d; }
+  .pill-rejected { background: #fef2f2; color: #b91c1c; }
+
+  /* EMPTY */
+  .ud-empty {
+    text-align: center; padding: 40px 20px; color: #bbb; font-size: 15px;
+    background: #fff; border-radius: 16px; border: 1px dashed #e5e5e5;
+  }
+
+  @media (max-width: 900px) {
+    .ud-wrap { grid-template-columns: 1fr; }
+    .ud-sidebar { position: static; }
+  }
+</style>
+
+<div class="ud-wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="ud-sidebar">
+    <div class="ud-avatar">{{ session['username'][0].upper() }}</div>
+    <div class="ud-name">{{ session['username'] }}</div>
+    <div class="ud-role">Registered Member</div>
+    <hr class="ud-divider">
+    <a class="ud-nav-item active" href="{{ url_for('user_dashboard') }}">
+      <span class="ud-nav-icon">🏠</span> Dashboard
+    </a>
+    <a class="ud-nav-item" href="{{ url_for('index') }}">
+      <span class="ud-nav-icon">🚗</span> All Cars
+    </a>
+    <a class="ud-nav-item" href="{{ url_for('logout') }}">
+      <span class="ud-nav-icon">🚪</span> Logout
+    </a>
+    <hr class="ud-divider">
+    <div class="ud-stat-mini">
+      <div class="ud-stat-mini-row">
+        <span class="ud-stat-mini-label">Total Bookings</span>
+        <span class="ud-stat-mini-val">{{ bookings|length }}</span>
+      </div>
+      <div class="ud-stat-mini-row">
+        <span class="ud-stat-mini-label">Approved</span>
+        <span class="ud-stat-mini-val" style="color:#4ade80;">
+          {{ bookings|selectattr('status','equalto','Approved')|list|length }}
+        </span>
+      </div>
+      <div class="ud-stat-mini-row">
+        <span class="ud-stat-mini-label">Pending</span>
+        <span class="ud-stat-mini-val" style="color:#f5a623;">
+          {{ bookings|selectattr('status','equalto','Pending')|list|length }}
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="ud-main">
+
+    <!-- TOP BAR -->
+    <div class="ud-topbar">
+      <div class="ud-greeting">
+        <h2>Hello, {{ session['username'] }} 👋</h2>
+        <p>Browse cars and manage your bookings below</p>
+      </div>
+      <div class="ud-topbar-right">
+        <span class="ud-badge-btn">🌟 Member</span>
+      </div>
+    </div>
+
+    <!-- HERO BANNER -->
+    <div class="ud-hero">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80" alt="Cars">
+      <div class="ud-hero-over">
+        <h3>Find Your Perfect Ride</h3>
+        <p>{{ cars|length }} cars available for booking right now</p>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="ud-stats">
+      <div class="ud-stat">
+        <div class="ud-stat-top">
+          <div class="ud-stat-icon icon-blue">🚗</div>
+          <div class="ud-stat-lbl">Cars Available</div>
+        </div>
+        <div class="ud-stat-num">{{ cars|length }}</div>
+      </div>
+      <div class="ud-stat">
+        <div class="ud-stat-top">
+          <div class="ud-stat-icon icon-green">✅</div>
+          <div class="ud-stat-lbl">Approved Bookings</div>
+        </div>
+        <div class="ud-stat-num">{{ bookings|selectattr('status','equalto','Approved')|list|length }}</div>
+      </div>
+      <div class="ud-stat">
+        <div class="ud-stat-top">
+          <div class="ud-stat-icon icon-amber">⏳</div>
+          <div class="ud-stat-lbl">Pending Bookings</div>
+        </div>
+        <div class="ud-stat-num">{{ bookings|selectattr('status','equalto','Pending')|list|length }}</div>
+      </div>
+    </div>
+
+    <!-- CAR BROWSER -->
+    <div>
+      <div class="ud-sec-head">
+        <h4>🚘 Browse &amp; Book Cars</h4>
+        <a href="{{ url_for('index') }}" class="ud-see-all">See all →</a>
+      </div>
+      <div class="ud-cars-scroll">
+        {% for car in cars %}
+        {% set img = brand_imgs.get(car['brand'], 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=500&q=80') %}
+        <div class="ud-car">
+          <img src="{{ img }}" alt="{{ car['brand'] }}" class="ud-car-img">
+          <div class="ud-car-body">
+            <div class="ud-car-title">{{ car['brand'] }} {{ car['model'] }}</div>
+            <div class="ud-car-meta">🎨 {{ car['color'] }} &nbsp;|&nbsp; 📅 {{ car['year'] }}</div>
+            <div class="ud-car-price">${{ "{:,.0f}".format(car['price']) }}</div>
+            <form method="POST" action="{{ url_for('book_car', car_id=car['id']) }}">
+              <button type="submit" class="ud-book-btn">Book Now</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- BOOKINGS TABLE -->
+    <div>
+      <div class="ud-sec-head">
+        <h4>📋 My Bookings</h4>
+      </div>
+      {% if bookings %}
+      <div class="ud-table-wrap">
+        <table class="ud-table">
+          <thead>
+            <tr>
+              <th>Car</th>
+              <th>Model</th>
+              <th>Booked On</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            {% set img = brand_imgs.get(b['brand'], 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&q=80') %}
+            <tr>
+              <td>
+                <img src="{{ img }}" alt="{{ b['brand'] }}" class="ud-car-thumb">
+              </td>
+              <td><strong>{{ b['brand'] }} {{ b['model'] }}</strong></td>
+              <td>{{ b['booked_at'].strftime('%d %b %Y, %H:%M') }}</td>
+              <td>
+                <span class="pill pill-{{ b['status'].lower() }}">{{ b['status'] }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="ud-empty">
+        🚫 No bookings yet — pick a car above and hit Book Now!
+      </div>
+      {% endif %}
+    </div>
+
+  </main>
+</div>
+
+{% endblock %}

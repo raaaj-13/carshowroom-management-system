@@ -1,4 +1,4 @@
-# 🚗 AutoShowroom - Car Booking Web Application
+# AutoShowroom - Car Booking Web Application
 
 ## Overview
 The AutoShowroom web application provides a platform to browse and book cars from a premium collection. The application features a modern, user-friendly interface with car galleries and comprehensive booking management.
@@ -23,12 +23,12 @@ The AutoShowroom web application provides a platform to browse and book cars fro
 | User  | gmail    | gmail123   |
 
 ## Features Added
-- ✅ Car images on Home, User Dashboard, Admin Dashboard
-- ✅ Image gallery strip on Admin Dashboard
-- ✅ Car photos in inventory table (Admin)
-- ✅ Hero banner with car photo
-- ✅ User Dashboard: welcome banner + booking stats
-- ✅ Admin Dashboard: stats with icons, gallery view, photo table
+- Car images on Home, User Dashboard, Admin Dashboard
+- Image gallery strip on Admin Dashboard
+- Car photos in inventory table (Admin)
+- Hero banner with car photo
+- User Dashboard: welcome banner + booking stats
+- Admin Dashboard: stats with icons, gallery view, photo table
 
 ## Setup Instructions
 1. **Install Dependencies**:

@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+{% set brand_imgs = {
+    'Toyota':  'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&q=80',
+    'Honda':   'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&q=80',
+    'Ford':    'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=400&q=80',
+    'BMW':     'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
+    'Hyundai': 'https://images.unsplash.com/photo-1629906066966-e5dc62a3cfcf?w=400&q=80',
+    'Mercedes':'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&q=80',
+    'Audi':    'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=400&q=80'
+} %}
+
+<style>
+/* ═══════════════════════════════════
+   ADMIN DASHBOARD — FULL LAYOUT
+═══════════════════════════════════ */
+.ad-wrap {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  min-height: 92vh;
+}
+
+/* ── SIDEBAR ── */
+.ad-sidebar {
+  background: #0f172a;
+  border-radius: 18px;
+  padding: 28px 18px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+.ad-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding: 0 10px;
+}
+.ad-logo span { color: #e94560; }
+.ad-sub {
+  font-size: 11px;
+  color: #64748b;
+  padding: 0 10px;
+  margin-bottom: 22px;
+}
+.ad-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 12px 6px;
+}
+.ad-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .15s;
+  margin-bottom: 1px;
+}
+.ad-nav:hover { background: #1e293b; color: #fff; }
+.ad-nav.active { background: #1e293b; color: #fff; }
+.ad-nav.active .ad-dot { background: #e94560; }
+.ad-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #334155;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.ad-nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.ad-divider { border: none; border-top: 1px solid #1e293b; margin: 12px 0; }
+
+/* Quick stats in sidebar */
+.ad-side-stats {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ad-ss-item { text-align: center; }
+.ad-ss-val { font-size: 20px; font-weight: 800; color: #fff; }
+.ad-ss-lbl { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+/* ── MAIN ── */
+.ad-main { display: flex; flex-direction: column; gap: 22px; }
+
+/* TOP BAR */
+.ad-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 6px rgba(0,0,0,.05);
+}
+.ad-topbar-left h2 { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; }
+.ad-topbar-left p  { font-size: 12px; color: #94a3b8; margin: 3px 0 0; }
+.ad-admin-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: #fef2f2; border: 1px solid #fecaca;
+  color: #dc2626; font-size: 12px; font-weight: 700;
+  padding: 7px 14px; border-radius: 20px;
+}
+
+/* STAT CARDS */
+.ad-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.ad-stat {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 6px rgba(0,0,0,.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ad-stat-top { display: flex; align-items: center; justify-content: space-between; }
+.ad-stat-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.s-red   { background: #fef2f2; }
+.s-blue  { background: #eff6ff; }
+.s-green { background: #f0fdf4; }
+.s-amber { background: #fffbeb; }
+.ad-stat-num { font-size: 30px; font-weight: 800; color: #0f172a; }
+.ad-stat-lbl { font-size: 12px; color: #94a3b8; font-weight: 500; }
+
+/* SECTION HEADER */
+.ad-sec-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.ad-sec-hd h3 {
+  font-size: 16px; font-weight: 700; color: #0f172a;
+  border-left: 3px solid #e94560; padding-left: 10px;
+  margin: 0;
+}
+
+/* PANEL (white card) */
+.ad-panel {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 6px rgba(0,0,0,.04);
+}
+
+/* ADD CAR FORM */
+.add-form {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+}
+.add-form input {
+  padding: 9px 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  font-size: 13px;
+  flex: 1;
+  min-width: 110px;
+  outline: none;
+  transition: border .15s;
+}
+.add-form input:focus { border-color: #e94560; }
+.btn-add {
+  background: #e94560; color: #fff;
+  border: none; border-radius: 9px;
+  padding: 10px 20px; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: background .15s; white-space: nowrap;
+}
+.btn-add:hover { background: #c73652; }
+
+/* TABLES */
+.ad-tbl-wrap { overflow-x: auto; }
+.ad-tbl {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.ad-tbl th {
+  text-align: left; padding: 10px 14px;
+  font-size: 11px; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: .6px;
+  border-bottom: 1px solid #f1f5f9; background: #f8fafc;
+}
+.ad-tbl th:first-child { border-radius: 8px 0 0 8px; }
+.ad-tbl th:last-child  { border-radius: 0 8px 8px 0; }
+.ad-tbl td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f8fafc;
+  color: #334155; vertical-align: middle;
+}
+.ad-tbl tr:last-child td { border-bottom: none; }
+.ad-tbl tr:hover td { background: #fafafa; }
+.tbl-car-img {
+  width: 60px; height: 38px;
+  border-radius: 7px; object-fit: cover;
+}
+.btn-del {
+  background: #fef2f2; color: #dc2626;
+  border: 1px solid #fecaca; border-radius: 7px;
+  padding: 5px 12px; font-size: 11px; font-weight: 700;
+  text-decoration: none; cursor: pointer; transition: all .15s;
+}
+.btn-del:hover { background: #dc2626; color: #fff; }
+.btn-ok {
+  background: #f0fdf4; color: #16a34a;
+  border: 1px solid #bbf7d0; border-radius: 7px;
+  padding: 5px 11px; font-size: 11px; font-weight: 700;
+  text-decoration: none; margin-right: 4px;
+}
+.btn-ok:hover { background: #16a34a; color: #fff; }
+.btn-rej {
+  background: #fef2f2; color: #dc2626;
+  border: 1px solid #fecaca; border-radius: 7px;
+  padding: 5px 11px; font-size: 11px; font-weight: 700;
+  text-decoration: none;
+}
+.btn-rej:hover { background: #dc2626; color: #fff; }
+
+/* STATUS PILLS */
+.pill {
+  display: inline-block; padding: 4px 11px;
+  border-radius: 20px; font-size: 11px; font-weight: 700;
+}
+.pill-pending  { background: #fffbeb; color: #b45309; }
+.pill-approved { background: #f0fdf4; color: #15803d; }
+.pill-rejected { background: #fef2f2; color: #b91c1c; }
+
+/* USER LIST */
+.user-list { display: flex; flex-direction: column; gap: 0; }
+.user-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 0; border-bottom: 1px solid #f1f5f9;
+}
+.user-row:last-child { border-bottom: none; }
+.user-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 14px; font-weight: 600; color: #0f172a; }
+.user-email { font-size: 12px; color: #94a3b8; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-id-badge {
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  color: #64748b; font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 6px; flex-shrink: 0;
+}
+
+/* TWO-COLUMN BOTTOM ROW */
+.ad-two-col {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .ad-stats { grid-template-columns: repeat(2,1fr); }
+  .ad-two-col { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .ad-wrap { grid-template-columns: 1fr; }
+  .ad-sidebar { position: static; }
+}
+</style>
+
+<div class="ad-wrap">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="ad-sidebar">
+    <div class="ad-logo">Auto<span>Showroom</span></div>
+    <div class="ad-sub">Admin Control Panel</div>
+
+    <div class="ad-section-label">Main Menu</div>
+    <a class="ad-nav active" href="{{ url_for('admin_dashboard') }}">
+      <span class="ad-nav-icon">📊</span> Dashboard <span class="ad-dot"></span>
+    </a>
+    <a class="ad-nav" href="{{ url_for('index') }}">
+      <span class="ad-nav-icon">🏠</span> Home
+    </a>
+
+    <div class="ad-section-label">Manage</div>
+    <a class="ad-nav" href="#cars-section">
+      <span class="ad-nav-icon">🚗</span> Cars
+    </a>
+    <a class="ad-nav" href="#bookings-section">
+      <span class="ad-nav-icon">📋</span> Bookings
+    </a>
+    <a class="ad-nav" href="#users-section">
+      <span class="ad-nav-icon">👥</span> Users
+    </a>
+
+    <hr class="ad-divider">
+    <a class="ad-nav" href="{{ url_for('logout') }}">
+      <span class="ad-nav-icon">🚪</span> Logout
+    </a>
+
+    <div class="ad-side-stats">
+      <div class="ad-ss-item">
+        <div class="ad-ss-val">{{ cars|length }}</div>
+        <div class="ad-ss-lbl">Cars</div>
+      </div>
+      <div class="ad-ss-item">
+        <div class="ad-ss-val">{{ user_count }}</div>
+        <div class="ad-ss-lbl">Users</div>
+      </div>
+      <div class="ad-ss-item">
+        <div class="ad-ss-val">{{ bookings|length }}</div>
+        <div class="ad-ss-lbl">Bookings</div>
+      </div>
+      <div class="ad-ss-item">
+        <div class="ad-ss-val">{{ bookings|selectattr('status','equalto','Approved')|list|length }}</div>
+        <div class="ad-ss-lbl">Approved</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <main class="ad-main">
+
+    <!-- TOP BAR -->
+    <div class="ad-topbar">
+      <div class="ad-topbar-left">
+        <h2>🛡️ Admin Dashboard</h2>
+        <p>Manage inventory, bookings and users</p>
+      </div>
+      <div class="ad-admin-pill">
+        🔴 Admin: {{ session['username'] }}
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="ad-stats">
+      <div class="ad-stat">
+        <div class="ad-stat-top">
+          <div class="ad-stat-icon s-blue">🚗</div>
+        </div>
+        <div class="ad-stat-num">{{ cars|length }}</div>
+        <div class="ad-stat-lbl">Total Cars</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-top">
+          <div class="ad-stat-icon s-green">👥</div>
+        </div>
+        <div class="ad-stat-num">{{ user_count }}</div>
+        <div class="ad-stat-lbl">Registered Users</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-top">
+          <div class="ad-stat-icon s-amber">📋</div>
+        </div>
+        <div class="ad-stat-num">{{ bookings|length }}</div>
+        <div class="ad-stat-lbl">Total Bookings</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-top">
+          <div class="ad-stat-icon s-red">✅</div>
+        </div>
+        <div class="ad-stat-num">{{ bookings|selectattr('status','equalto','Approved')|list|length }}</div>
+        <div class="ad-stat-lbl">Approved</div>
+      </div>
+    </div>
+
+    <!-- ADD CAR -->
+    <div class="ad-panel" id="cars-section">
+      <div class="ad-sec-hd"><h3>➕ Add New Car</h3></div>
+      <form method="POST" action="{{ url_for('add_car') }}" class="add-form">
+        <input type="text"   name="brand"  placeholder="Brand"  required>
+        <input type="text"   name="model"  placeholder="Model"  required>
+        <input type="number" name="year"   placeholder="Year"   required>
+        <input type="number" name="price"  placeholder="Price"  step="0.01" required>
+        <input type="text"   name="color"  placeholder="Color"  required>
+        <button type="submit" class="btn-add">+ Add Car</button>
+      </form>
+    </div>
+
+    <!-- CAR INVENTORY TABLE -->
+    <div class="ad-panel">
+      <div class="ad-sec-hd"><h3>🚗 Car Inventory</h3></div>
+      <div class="ad-tbl-wrap">
+        <table class="ad-tbl">
+          <thead>
+            <tr>
+              <th>Photo</th><th>#</th><th>Brand</th><th>Model</th>
+              <th>Year</th><th>Price</th><th>Color</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for car in cars %}
+            {% set img = brand_imgs.get(car['brand'], 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&q=80') %}
+            <tr>
+              <td><img src="{{ img }}" class="tbl-car-img" alt="{{ car['brand'] }}"></td>
+              <td>{{ car['id'] }}</td>
+              <td><strong>{{ car['brand'] }}</strong></td>
+              <td>{{ car['model'] }}</td>
+              <td>{{ car['year'] }}</td>
+              <td><strong>${{ "{:,.0f}".format(car['price']) }}</strong></td>
+              <td>{{ car['color'] }}</td>
+              <td>
+                <a href="{{ url_for('delete_car', car_id=car['id']) }}" class="btn-del">Delete</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOTTOM TWO-COLUMN: BOOKINGS + USER LIST -->
+    <div class="ad-two-col">
+
+      <!-- BOOKINGS TABLE -->
+      <div class="ad-panel" id="bookings-section">
+        <div class="ad-sec-hd"><h3>📋 All Bookings</h3></div>
+        <div class="ad-tbl-wrap">
+          <table class="ad-tbl">
+            <thead>
+              <tr>
+                <th>#</th><th>User</th><th>Car</th>
+                <th>Date</th><th>Status</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in bookings %}
+              <tr>
+                <td>{{ b['id'] }}</td>
+                <td><strong>{{ b['username'] }}</strong></td>
+                <td>{{ b['brand'] }} {{ b['model'] }}</td>
+                <td>{{ b['booked_at'].strftime('%d %b %Y') }}</td>
+                <td>
+                  <span class="pill pill-{{ b['status'].lower() }}">{{ b['status'] }}</span>
+                </td>
+                <td>
+                  {% if b['status'] == 'Pending' %}
+                  <a href="{{ url_for('update_booking', booking_id=b['id'], status='Approved') }}" class="btn-ok">✓</a>
+                  <a href="{{ url_for('update_booking', booking_id=b['id'], status='Rejected') }}" class="btn-rej">✗</a>
+                  {% else %}—{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- USER LIST PANEL -->
+      <div class="ad-panel" id="users-section">
+        <div class="ad-sec-hd">
+          <h3>👥 Registered Users</h3>
+          <span style="font-size:12px;color:#94a3b8;">{{ user_count }} total</span>
+        </div>
+        <div class="user-list">
+          {% for u in users %}
+          <div class="user-row">
+            <div class="user-avatar">{{ u['username'][0].upper() }}</div>
+            <div class="user-info">
+              <div class="user-name">{{ u['username'] }}</div>
+              <div class="user-email">{{ u['email'] }}</div>
+            </div>
+            <span class="user-id-badge">#{{ u['id'] }}</span>
+          </div>
+          {% else %}
+          <div style="text-align:center;padding:30px;color:#94a3b8;font-size:14px;">
+            No users registered yet.
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div><!-- end two-col -->
+
+  </main>
+</div>
+
+{% endblock %}
