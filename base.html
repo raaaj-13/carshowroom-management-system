@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Car Showroom{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🚗 AutoShowroom</div>
+    <div class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin Panel</a>
+        {% elif session.get('user_id') %}
+            <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+        {% endif %}
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('logout') }}">Logout ({{ session['username'] }})</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
