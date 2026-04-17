@@ -57,7 +57,7 @@ The application is accessible at: **http://127.0.0.1:5000** or **http://localhos
 
 ## Database Configuration
 The Flask application connects to the `postgres` database (not `car_showroom`) for user and car data management.
-![Homepage](screenshots/homepage.png)
-![Login Page](screenshots/login.png)
-![User Dashboard](screenshots/user_dashboard.png)
-![Admin Dashboard](screenshots/admin_dashboard.png)
+![Homepage](screenshot/homepage.png)
+![Login Page](screenshot/login.png)
+![User Dashboard](screenshot/user_dashboard.png)
+![Admin Dashboard](screenshot/admin_dashboard.png)
